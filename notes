@@ -1,0 +1,6 @@
+- flesh out dollar.h
+  . time points
+  . numbers
+  . sequences
+  . maps
+  . strings

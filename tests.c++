@@ -1,0 +1,13 @@
+#import "test.h"
+#import "rmr.h"
+#import "sym.h"
+
+#import "arena_test.h"
+#import "fmt_test.h"
+#import "node_test.h"
+#import "quat_test.h"
+#import "ring_test.h"
+#import "sym_test.h"
+#import "val_test.h"
+#import "vec_test.h"
+#import "tree_test.h"

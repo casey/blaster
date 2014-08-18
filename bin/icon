@@ -1,0 +1,7 @@
+#!/usr/bin/env zsh
+
+icon=$1
+dest=$2
+
+Rez -append $icon -o $dest
+SetFile -a C $dest

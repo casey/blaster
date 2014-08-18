@@ -1,0 +1,28 @@
+#!/usr/bin/env zsh
+
+set -o nounset
+
+file=/tmp/twitchmark_test_file
+
+dd if=/dev/zero of=$file bs=3000000 count=1
+
+test () {
+  echo -n "$1: "
+  curl -o /dev/null -s -X POST --data-binary "@$file"  -w "%{time_total}\\n" "$1:1935"
+  echo $?
+}
+
+test live-ams.twitch.tv
+test live-arn.justin.tv
+test live-cdg.twitch.tv
+test live-dfw.twitch.tv
+test live-fra.twitch.tv
+test live-iad.twitch.tv
+test live-jfk.twitch.tv
+test live-lax.twitch.tv
+test live-lhr.twitch.tv
+test live-mia.twitch.tv
+test live-ord.twitch.tv
+test live-prg.twitch.tv
+test live-sin-backup.twitch.tv
+test live.twitch.tv

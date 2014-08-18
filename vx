@@ -1,0 +1,147 @@
+#!/usr/bin/env python3
+
+# Welcome to the vx C++ linear algebra library generator!
+#
+# It is genuinely horrible.
+#
+# I had another dream, this time with Shaq dressed as Shaq
+# from the video game Shaq-Fu. He explained a better
+# implementation without the code bloat problems of the last
+# one and only negligibly worse runtime performance
+# characteristics. After that he told me that time was a
+# flat circle and hit me in the face with a Shaq-urikin and
+# I woke up, with the finished code already in my editor.
+
+import sys, inspect, re, jinja2, itertools
+
+def die(msg=None):
+  log('dead!' if msg == None else msg)
+  exit(1)
+
+def log(msg):
+  sys.stderr.write("%s\n" % msg)
+
+def preprocess(source):
+  def upper_repl(match):
+    g0  = match.group(0)
+    if g0 in 'TEST ASSERT CHAR_BIT'.split():
+      return g0
+    return '{{%s}}' % g0.lower()
+  return re.sub('[A-Z][A-Z_]*', upper_repl, source)
+
+loader = jinja2.DictLoader({'vx.cpp': preprocess(open('vx.cpp').read())})
+
+env = jinja2.Environment(
+  loader                = loader,
+  line_statement_prefix = '%',
+  undefined             = jinja2.StrictUndefined,
+  trim_blocks           = True,
+  lstrip_blocks         = True
+)
+
+template = env.get_template('vx.cpp')
+
+namesets = 'xyzw rgba stpq'.split()
+ops      = '+-*/'
+
+type_prefixes = {
+  'float':  '',
+  'double': 'd',
+  'int':    'i',
+  'uint':   'u'
+}
+
+lengths = [4, 3, 2]
+
+def swizzles(vec_length, swizzle_length):
+  for nameset in namesets:
+    components = nameset[0:vec_length]
+    yield list(itertools.product(components, repeat=swizzle_length))
+
+def commas(l):
+  return ', '.join(l)
+
+sub_res = {
+  'id': r'[a-zA-Z_][a-zA-Z_0-9]*'
+}
+
+pat = re.compile(r'''
+^
+\s*
+(?P<static>  static \s+)?
+(?P<return_type> %(id)s)
+\s+
+(?P<class_name>  %(id)s)
+\s*
+::
+\s*
+(?P<method_name>  %(id)s)
+[(]
+(?P<parameters>[^)]*)
+[)]
+\s*
+(?P<const>  const)?
+''' % sub_res, re.VERBOSE)
+
+def parse_signature(s):
+  m = pat.match(s)
+  m or die('parse_signature: bad signature: %s' % s)
+  d = m.groupdict()
+  d['static'] = bool(d['static'])
+  d['const' ] = bool(d['const' ])
+  return d
+
+def make_vec_name(t, l):
+  return '%svec%s' % (type_prefixes[t], l)
+
+def make_mat_name(t, l):
+  return '%smat%s' % (type_prefixes[t], l)
+
+def make_all_names(t, l):
+  if t == 'double' or t == 'float':
+    return [make_vec_name(t, l), make_mat_name(t, l)]
+  else:
+    return [make_vec_name(t, l)]
+
+v = dict(
+  namesets        = namesets,
+  ops             = ops,
+  default_nameset = namesets[0],
+  lengths         = lengths,
+  max_length      = max(lengths),
+  swizzles        = swizzles,
+  crazy_swizzles  = False,
+  swizzles_on     = False,
+  types           = type_prefixes.keys(),
+  fp_types        = ['double', 'float'],
+  int_types       = ['int', 'uint'],
+  make_vec_name   = make_vec_name,
+  make_mat_name   = make_mat_name,
+  make_all_names  = make_all_names,
+  commas          = commas,
+  parse_signature = parse_signature,
+  times           = lambda l, item: [item] * l,
+  make_params     = lambda t, names: commas('%s %s' % (t, n) for n in names),
+  header          = False,
+  source          = False,
+  test            = False
+)
+
+cmd = sys.argv[1]
+if cmd in 'header source test'.split():
+  v[cmd] = True
+else:
+  die('unknown command: %s' % cmd)
+
+text = template.render(v)
+
+text = re.sub('^\s*$','', text, flags=re.M)
+
+from subprocess import Popen, PIPE, STDOUT
+p = Popen('astyle -Y --indent=spaces=2'.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
+
+text = p.communicate(input=bytes(text, 'UTF-8'))[0].decode('utf-8')
+
+print(text)
+
+exit(p.wait())

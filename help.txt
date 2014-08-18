@@ -1,0 +1,16 @@
+RMR.
+
+Usage:
+  rmr [options]
+
+Options:
+  -v, --verbose            Print the info log.
+  -b, --background         Open window in background.
+  -r, --route ROUTE        Route [default: test].
+  -p, --program PROGRAM    Program. Implies --route=program.
+  -w, --width WIDTH        Width [default: 640].
+  -h, --height HEIGHT      Height [default: 640].
+  -i, --id ID              ID.
+  -l, --left LEFT          Position of the left side of window [default: 0].
+  -t, --top TOP            Position of the top of the window [default: 0].
+  --resolution RESOLUTION  Select a resolution preset.
