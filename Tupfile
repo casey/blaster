@@ -12,7 +12,7 @@ endif
 
 CXXFLAGS += -D GL_SILENCE_DEPRECATION
 CXXFLAGS += -D __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0
-CXXFLAGS += -F /Library/Frameworks/
+CXXFLAGS += -F frameworks
 CXXFLAGS += -I /opt/local/include
 CXXFLAGS += -Wall
 CXXFLAGS += -Werror
@@ -38,7 +38,7 @@ CXXFLAGS += -pedantic
 CXXFLAGS += -std=c++17
 CXXFLAGS += -stdlib=libc++
 
-LINKFLAGS += -F /Library/Frameworks/
+LINKFLAGS += -F frameworks
 LINKFLAGS += -L /opt/local/lib
 LINKFLAGS += -framework Foundation
 LINKFLAGS += -framework OpenGL
