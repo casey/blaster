@@ -29,12 +29,13 @@ struct app_t : top_t {
 
     if (args.get("--resolution")) {
       string r = args.get("--resolution").str();
-      if      (r == "1080p") { width = 1920; height = 1080;               }
+      if      (r == "1800p") { width = 2880; height = 1800;               }
+      else if (r == "1080p") { width = 1920; height = 1080;               }
       else if (r == "720p" ) { width = 1280; height =  720;               }
       else if (r == "480p" ) { width = 854;  height =  480;               }
       else if (r == "360p" ) { width = 640;  height =  360;               }
       else if (r == "240p" ) { width = 426;  height =  240;               }
-      else if (r == "xga" )  { width = 1024; height =  768;               }
+      else if (r == "xga"  ) { width = 1024; height =  768;               }
       else if (r == "debug") { width = 1150; height = 1100;               }
       else                   { rmr.die("main: bad resolution: %"_fmt(r)); }
     }
