@@ -671,7 +671,7 @@ gl_t& gl_t::new_prg(sym_t s) {
       std::smatch match;
       if (regex_match(line, match, directive_re)) {
         string directive = match[1];
-        if (directive == "vertex") { 
+        if (directive == "vertex") {
           section = section_t::vertex;
         } else if (directive == "fragment") {
           section = section_t::fragment;
@@ -733,7 +733,7 @@ gl_t& gl_t::new_prg(sym_t s) {
     link_and_validate();
 
     map<sym_t, var_t> vars = {};
-    
+
     int attributes = gl_get_program<GL_ACTIVE_ATTRIBUTES>(p);
     for (int i = 0; i < attributes; i++) {
       var_t v = var_t::get_attrib(p, i);
@@ -833,7 +833,7 @@ const string& gl_t::enum_name(uint e) {
 
 #define _(a, b) static_assert(std::is_same<a, b>::value, "type " #a " is not " #b)
 _(GLboolean , u8 );
-_(GLbyte    , i8 ); 
+_(GLbyte    , i8 );
 _(GLshort   , i16);
 _(GLint     , i32);
 _(GLint64   , i64);
