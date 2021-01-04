@@ -13,6 +13,7 @@ clean:
 	rm -rf tmp
 
 deps:
+	pip3 install jinja2
 	brew install tup astyle glfw yajl portmidi portaudio fftw
 	echo "syphon framework from: http://syphon.v002.info"
 	echo "loopback from https://rogueamoeba.com/loopback"
