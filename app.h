@@ -17,7 +17,7 @@ struct app_t : top_t {
     string help_text = rmr.slurp(rmr.cfg("base") + "help.txt");
     string json_args = rmr.run(opt_args[0], opt_args, help_text);
     val_t  args      = val_t::parse(json_args);
-    
+
     if (args.is_null()) {
       rmr.die("app: bad command line: %"_fmt(rmr.join(raw_args, " ")));
     }
@@ -79,7 +79,7 @@ struct app_t : top_t {
     ring_t<double, 60> frame_times{};
 
     auto& overlay = w.spawn<grid_v>(30, 30);
-    
+
     overlay
     .foreground("white"_color)
     .background("black"_color)
@@ -130,7 +130,7 @@ struct app_t : top_t {
   }
 
   void operator()(const tick_e& tick) override {
-    if (reloading) { 
+    if (reloading) {
       rmr << "main: reloaded";
       reloading = false;
     }
@@ -147,7 +147,7 @@ struct app_t : top_t {
 
   void screenshot(window_t& w) {
     string dir = rmr.cfg("base") + "dat/screens";
-  
+
     if (rmr.is_dir(dir)) {
       string filename = dir + "/%.%.png"_fmt(rmr.ms(), rmr.git_head());
       write_png(filename.c_str(), w.screenshot());

@@ -111,7 +111,7 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
 
   glfwSetKeyCallback(__.w, [](GLFWwindow* w, int key, int code, int action, int mods) {
     key_e* e = nullptr;
-  
+
     if     (action == GLFW_PRESS  ) e = new keydown_e();
     else if(action == GLFW_RELEASE) e = new keyup_e();
     else if(action == GLFW_REPEAT ) e = new keyrepeat_e();
@@ -230,16 +230,16 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
   // shader toy variables
   .supplier("iGlobalTime",         [&](gl_t& gl, sym_t var) { gl.value(var, __.elapsed                            ); })
   .supplier("iResolution",         [&](gl_t& gl, sym_t var) { gl.value(var, __.nav.width(), __.nav.height(), 0.0  ); })
-  .supplier("iMouse",              [&](gl_t& gl, sym_t var) { 
+  .supplier("iMouse",              [&](gl_t& gl, sym_t var) {
     if (__.nav.cursor_down()) {
-      gl.value(var, 
+      gl.value(var,
         (__.nav.cursor    ().x() * 0.5 + 0.5) * __.nav.width (),
         (__.nav.cursor    ().y() * 0.5 + 0.5) * __.nav.height(),
         (__.nav.drag_start().x() * 0.5 + 0.5) * __.nav.width (),
         (__.nav.drag_start().y() * 0.5 + 0.5) * __.nav.height()
       );
     } else {
-      gl.value(var, 
+      gl.value(var,
         (__.nav.drag_end  ().x() * 0.5 + 0.5) *  __.nav.width (),
         (__.nav.drag_end  ().y() * 0.5 + 0.5) *  __.nav.height(),
         (__.nav.drag_start().x() * 0.5 + 0.5) * -__.nav.width (),
@@ -247,7 +247,7 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
       );
     }
   })
-  .supplier("iDate", [&](gl_t& gl, sym_t var) { 
+  .supplier("iDate", [&](gl_t& gl, sym_t var) {
     time_t t      = time(NULL);
     tm* p         = localtime(&t);
     float year    = p->tm_year + 1900;
@@ -421,7 +421,7 @@ void window_t::operator()(const render_e& e) {
     }
     gl().image("waveform", __.waveform);
   }
-  { 
+  {
     int i = 0;
     for (auto x : rmr.wave().m().frequency) {
       u8 _ = x * 255.0;
@@ -479,7 +479,7 @@ void window_t::operator()(const render_e& e) {
     syphon().publish();
   }
 
-  glfwSwapBuffers(__.w); 
+  glfwSwapBuffers(__.w);
 
   if (e.tick.count < 10) gl().check();
 }
