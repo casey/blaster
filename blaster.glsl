@@ -57,7 +57,6 @@ FILTER(mirror_v)   { return texture(source, vec2(uv.x, uv.y < 0.5 ? uv.y * 2 : 1
 
 // heart: Created by inigo quilez - iq/2013
 // License Creative Commons Attribution-NonCommercial-ShareAlike 3.0 Unported License.
-/*
 FILTER(heart) {
   vec2 p = (2.0*gl_FragCoord.xy-iResolution.xy)/min(iResolution.y,iResolution.x);
 
@@ -94,7 +93,6 @@ FILTER(heart) {
 
   return vec4(col,1.0);
 }
-*/
 
 const float pixel_size = 100.0;
 
