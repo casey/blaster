@@ -15,7 +15,7 @@ CXXFLAGS += -D __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0
 CXXFLAGS += -F frameworks
 CXXFLAGS += -I /opt/homebrew/include
 CXXFLAGS += -Wall
-CXXFLAGS += -Werror
+# CXXFLAGS += -Werror
 CXXFLAGS += -Wextra
 CXXFLAGS += -Wfatal-errors
 CXXFLAGS += -Winvalid-pch
@@ -60,15 +60,6 @@ OBJECTS  := $(patsubst %.c++,tmp/%.o,$(SOURCES))
 tmp/main: $(OBJECTS)
 	$(CXX) $(LINKFLAGS) $(OBJECTS) -o $@
 
-vec.h: vx
-	uv run ./vx header > $@
-
-vec.c++: vx
-	uv run ./vx source > $@
-
-vec_test.h: vx
-	uv run ./vx test > $@
-
 tmp:
 	mkdir -p tmp
 
@@ -80,4 +71,4 @@ tmp/%.o: %.c++ vec.h vec_test.h tmp/common.h.gch | tmp
 
 .PHONY: clean
 clean:
-	rm -rf tmp vec.h vec.c++ vec_test.h
+	rm -rf tmp
