@@ -1,6 +1,6 @@
-CXX = /usr/bin/clang++
+CXX := /usr/bin/clang++
 
-DEBUG = y
+DEBUG := y
 
 ifeq ($(DEBUG),y)
 CXXFLAGS += -O0
@@ -13,7 +13,7 @@ endif
 CXXFLAGS += -D GL_SILENCE_DEPRECATION
 CXXFLAGS += -D __ASSERT_MACROS_DEFINE_VERSIONS_WITHOUT_UNDERSCORES=0
 CXXFLAGS += -F frameworks
-CXXFLAGS += -I /opt/local/include
+CXXFLAGS += -I /opt/homebrew/include
 CXXFLAGS += -Wall
 CXXFLAGS += -Werror
 CXXFLAGS += -Wextra
@@ -39,7 +39,7 @@ CXXFLAGS += -std=c++17
 CXXFLAGS += -stdlib=libc++
 
 LINKFLAGS += -F frameworks
-LINKFLAGS += -L /opt/local/lib
+LINKFLAGS += -L /opt/homebrew/lib
 LINKFLAGS += -framework Foundation
 LINKFLAGS += -framework OpenGL
 LINKFLAGS += -framework Syphon
@@ -54,14 +54,30 @@ LINKFLAGS += -rdynamic
 LINKFLAGS += -std=c++17
 LINKFLAGS += -stdlib=libc++
 
-: vx |> ./vx header > %o |> vec.h
+SOURCES  := $(wildcard *.c++)
+OBJECTS  := $(patsubst %.c++,tmp/%.o,$(SOURCES))
 
-: vx |> ./vx source > %o |> vec.c++
+tmp/main: $(OBJECTS)
+	$(CXX) $(LINKFLAGS) $(OBJECTS) -o $@
 
-: vx |> ./vx test   > %o |> vec_test.h
+vec.h: vx
+	uv run ./vx header > $@
 
-: common.h |> ^ cc %f^ $(CXX) $(CXXFLAGS) -x objective-c++-header %f -c -o %o |> tmp/%f.gch {gch}
+vec.c++: vx
+	uv run ./vx source > $@
 
-: foreach *.c++ | vec.h vec_test.h {gch} |> ^ cc %f^ $(CXX) $(CXXFLAGS) -x objective-c++ -include-pch tmp/common.h.gch -c %f -o %o |> tmp/%B.o
+vec_test.h: vx
+	uv run ./vx test > $@
 
-: tmp/*.o |> ^ ld main^ $(CXX) $(LINKFLAGS) %f -o %o |> tmp/main
+tmp:
+	mkdir -p tmp
+
+tmp/common.h.gch: common.h | tmp
+	$(CXX) $(CXXFLAGS) -x objective-c++-header $< -c -o $@
+
+tmp/%.o: %.c++ vec.h vec_test.h tmp/common.h.gch | tmp
+	$(CXX) $(CXXFLAGS) -x objective-c++ -include-pch tmp/common.h.gch -c $< -o $@
+
+.PHONY: clean
+clean:
+	rm -rf tmp vec.h vec.c++ vec_test.h

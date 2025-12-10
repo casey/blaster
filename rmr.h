@@ -197,7 +197,7 @@ struct rmr_t : noncopyable_t {
   template <typename T>
   static double mean(const T& container) { return sum(container) / container.size(); }
 
-  template<typename T, int size> constexpr static int size(T(&)[size]) { return size; }
+  template<typename T, int N> constexpr static int size(T(&)[N]) { return N; }
 
   template<typename T> static const T& constant(      T& _) { return const_cast<const T&>(_); }
   template<typename T> static       T& variable(const T& _) { return const_cast<      T&>(_); }
