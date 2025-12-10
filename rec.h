@@ -29,8 +29,11 @@ struct rec_t {
 
   const callback_t& callback();
 
+  int channels();
+
 private:
   callback_t                    _callback;
+  int                           _channels;
   portaudio::AutoSystem*        auto_sys;
   portaudio::FunCallbackStream* stream;
 };

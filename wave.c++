@@ -22,7 +22,7 @@ constexpr size_t F = wave_t::frequency_count;
 constexpr size_t O = S / 2 + 1;
 
 struct fft_t {
-  fft_t() 
+  fft_t()
     : plan          (fftw_plan_dft_r2c_1d(S, in,  out,       FFTW_ESTIMATE)),
       phaseless_plan(fftw_plan_dft_c2r_1d(S, out, phaseless, FFTW_ESTIMATE))
   { }
@@ -119,8 +119,8 @@ struct wave_t::data_t {
       }
 
       for (int i = 0; i < rec_window; i++) {
-        l_input[i + S - rec_window] = u.left [i];
-        r_input[i + S - rec_window] = u.right[i];
+        if (u.left)  l_input[i + S - rec_window] = u.left [i];
+        if (u.right) r_input[i + S - rec_window] = u.right[i];
       }
       input_version++;
     });
