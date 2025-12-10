@@ -29,7 +29,7 @@ struct buffer_t {
   uint  id   = next_buffer++;
   uvec2 size = {0, 0};
   sym_t sym  = "buffer%"_fmt(id);
-  
+
   buffer_t(gl_t& gl) : gl(gl) {
     gl
     .new_fbo(sym, fbo)
@@ -80,7 +80,7 @@ vector<u32string>& game_over_lines() {
     U"                ",
     U"                ",
   };
-  
+
   return _;
 }
 
@@ -370,22 +370,23 @@ struct blaster : view_t {
       char c = e.str[0];
       switch(c) {
 #define _(CHAR, CMD) case CHAR: last_command = #CMD; rmr << last_command; CMD; break;
+        _(' ', push_top()   );
+        _('0', reset_beat() );
+        _('a', advance()    );
+        _('c', cycle()      );
+        _('d', roll_down()  );
+        _('j', push_top()   );
+        _('k', push_bottom());
+        _('m', multiply()   );
+        _('p', nuke()       );
+        _('r', recall()     );
+        _('s', save()       );
+        _('t', roll_up()    );
         _('u', undo()       );
         _('w', waffle()     );
-        //_('r', roll_down()  );
-        _('t', roll_up()    );
-        _('s', save()       );
-        _('r', recall()     );
-        _('z', unwind()     );
         _('x', randomize()  );
-        _('j', push_top()   );
-        _('c', cycle()      );
-        _('a', advance()    );
-        _('m', multiply()   );
-        _('k', push_bottom());
-        _(' ', push_top()   );
-        _('p', nuke()       );
-        _('0', reset_beat() );
+        _('z', unwind()     );
+        _('?', print() );
 #undef _
         default: rewind();
       }
@@ -593,6 +594,17 @@ struct blaster : view_t {
     for (int i = 0; i < depth_limit; i++) {
       push_top();
     }
+  }
+
+  void print() {
+    auto& c = current();
+
+    for (int i = 0; i < c.size(); i++) {
+      if (i > 0) std::cerr << ' ';
+      std::cerr << c[i];
+    }
+
+    std::cerr << std::endl;
   }
 
   void randomize() {

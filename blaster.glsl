@@ -165,7 +165,7 @@ FILTER(glow) {
   }
   vec4 c = texture(source, uv);
   float r = c.r;
-  float f = r < 0.3 ? 0.012 : r < 0.5 ? 0.009 : 0.0075 ; 
+  float f = r < 0.3 ? 0.012 : r < 0.5 ? 0.009 : 0.0075 ;
   return sum * sum * f + color;
 }
 
@@ -177,7 +177,7 @@ const mat3 rgb_to_yiq = mat3(0.299, 0.587, 0.114, 0.595716, -0.274453, -0.321263
 const mat3 yiq_to_rgb = mat3(1.0, 0.9563, 0.6210, 1.0, -0.2721, -0.6474, 1.0, -1.1070, 1.7046);
 
 FILTER(rotate) {
-  vec3  yiq    = rgb_to_yiq * texture(source, uv).rgb; 
+  vec3  yiq    = rgb_to_yiq * texture(source, uv).rgb;
   float hue    = atan(yiq.b, yiq.g);
   float hue_   = hue + 15;
   float chroma = sqrt(yiq.b * yiq.b + yiq.g * yiq.g);
@@ -320,16 +320,16 @@ const float max_distort = 2.2;
 const int num_iter = 12;
 const float reci_num_iter_f = 1.0 / float(num_iter);
 
-FILTER(aberrate) { 
+FILTER(aberrate) {
 	vec3 sumcol = vec3(0.0);
-	vec3 sumw = vec3(0.0);	
+	vec3 sumw = vec3(0.0);
 	for ( int i=0; i<num_iter;++i ) {
 		float t = float(i) * reci_num_iter_f;
 		vec3 w = spectrum_offset( t );
 		sumw += w;
 		sumcol += w * texture(source, barrel(uv, X * max_distort*t ) ).rgb;
 	}
-		
+
   return vec4(sumcol.rgb / sumw, 1.0);
 }
 
