@@ -54,7 +54,7 @@ rec_t::rec_t(uint frame_count, callback_t c) : _callback(c), auto_sys(new portau
 
   portaudio::DirectionSpecificStreamParameters inParamsRecord(
     input
-  , 2
+  , 1
   , portaudio::FLOAT32
   , false
   , input.defaultLowInputLatency()
