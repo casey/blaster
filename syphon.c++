@@ -34,7 +34,8 @@ syphon_t::~syphon_t() {
 void syphon_t::bind() {
   static once_t first;
   __.bound && rmr.die("syphon.bind: double bind");
-  NSSize size = NSMakeSize(__.window.width(), __.window.height());
+  auto framebuffer = __.window.framebuffer_size();
+  NSSize size = NSMakeSize(framebuffer.x(), framebuffer.y());
   auto status = [__.server bindToDrawFrameOfSize: size];
   if (first) __.window.gl().expect_invalid_operation();
   if (status != YES) rmr.die("syphon.bind: bindToDrawFrameOfSize failed: %"_fmt((int)status));
