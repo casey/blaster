@@ -25,7 +25,7 @@ struct app_t : top_t {
     int width   = rmr.stoi(args.get("--width" ).str());
     int height  = rmr.stoi(args.get("--height").str());
 
-    if ((bool)args.get("--verbose")) rmr.verbose();
+    if ((bool)args.get("--verbose")) rmr.loglevel_info();
 
     if (args.get("--resolution")) {
       string r = args.get("--resolution").str();
@@ -103,7 +103,7 @@ struct app_t : top_t {
         overlay.clear().set(0, 0, 1.0, 0.25, "%ms"_fmt(rmr.ms(rmr.mean(frame_times))));
       }
 
-      rmr.info("frame %: %ms %"_fmt(tick.count, rmr.ms(tick.elapsed()), rmr.format_bytes(rmr.heap_size())));
+      rmr.spam("frame %: %ms %"_fmt(tick.count, rmr.ms(tick.elapsed()), rmr.format_bytes(rmr.heap_size())));
       if (tick.first()) screenshot(w);
     }
   }
