@@ -189,13 +189,14 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
     dispatch(w, scroll_e{x, y});
   });
 
-  glfwSetWindowRefreshCallback  (__.w, [](GLFWwindow* w                       ) { rmr.info("window refresh"); });
   glfwSetWindowIconifyCallback  (__.w, [](GLFWwindow* w, int iconified        ) { rmr.info("iconify");        });
-  glfwSetFramebufferSizeCallback(__.w, [](GLFWwindow* w, int width, int height) {
-    dispatch(w, resize_e(width, height));
-    rmr.info("buffer size: %x%"_fmt(width, height));
-  });
   glfwSetWindowPosCallback      (__.w, [](GLFWwindow* w, int x, int y         ) { rmr.info("window pos");     });
+  glfwSetWindowRefreshCallback  (__.w, [](GLFWwindow* w                       ) { rmr.info("window refresh"); });
+
+  glfwSetFramebufferSizeCallback(__.w, [](GLFWwindow* w, int width, int height) {
+    rmr.info("buffer size: %x%"_fmt(width, height));
+    dispatch(w, resize_e(width, height));
+  });
 
   NSOpenGLContext* ns_ctx = glfwGetNSGLContext(__.w);
   CGLContextObj ctx_a = (CGLContextObj)[ns_ctx CGLContextObj];
