@@ -21,7 +21,7 @@ package: build
 	cp ./tmp/main ./tmp/rmr
 	./bin/icon `./bin/pick ./rsc/icon/*.rsrc` ./tmp/rmr
 
-db:
+db: package
 	lldb -- ./tmp/rmr --resolution=debug --route=blaster --left=10
 
 sloc:

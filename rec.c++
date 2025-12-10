@@ -52,9 +52,11 @@ rec_t::rec_t(uint frame_count, callback_t c) : _callback(c), auto_sys(new portau
   auto& input = portaudio::System::instance().defaultInputDevice();
   rmr.info("rec: using input stream: %"_fmt(input.name()));
 
+  int channels = std::min(2, input.maxInputChannels());
+
   portaudio::DirectionSpecificStreamParameters inParamsRecord(
     input
-  , 1
+  , channels
   , portaudio::FLOAT32
   , false
   , input.defaultLowInputLatency()

@@ -4,7 +4,7 @@ DEBUG := y
 
 ifeq ($(DEBUG),y)
 CXXFLAGS += -O0
-#CXXFLAGS += -g
+CXXFLAGS += -g
 else
 CXXFLAGS += -O3
 CXXFLAGS += -emit-llvm
