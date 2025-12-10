@@ -1,6 +1,2 @@
-/.tup
-/tmp
-/vec.h
-/vec.c++
-/vec_test.h
 /dat/screens
+/tmp
