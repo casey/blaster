@@ -119,8 +119,8 @@ struct wave_t::data_t {
       }
 
       for (int i = 0; i < rec_window; i++) {
-        l_input[i + S - rec_window] = u.left [i];
-        r_input[i + S - rec_window] = u.right[i];
+        if (u.left)  l_input[i + S - rec_window] = u.left [i];
+        if (u.right) r_input[i + S - rec_window] = u.right[i];
       }
       input_version++;
     });

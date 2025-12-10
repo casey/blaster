@@ -31,8 +31,8 @@ static int record_callback(
     u.output_overflow  = statusFlags & paOutputOverflow;
     u.priming_output   = statusFlags & paPrimingOutput;
     u.frame_count      = numframes;
-    u.left             = ((float**)input)[0];
-    u.right            = ((float**)input)[1];
+    u.left             = r.channels() > 0 ? ((float**)input)[0] : nullptr;
+    u.right            = r.channels() > 1 ? ((float**)input)[1] : nullptr;
     u.ok               = !(
       u.input_underflow || u.input_overflow  || u.output_underflow || u.output_overflow || u.priming_output
     );
@@ -48,15 +48,17 @@ static int record_callback(
 
 const rec_t::callback_t& rec_t::callback() { return _callback; }
 
+int rec_t::channels() { return _channels; }
+
 rec_t::rec_t(uint frame_count, callback_t c) : _callback(c), auto_sys(new portaudio::AutoSystem) {
   auto& input = portaudio::System::instance().defaultInputDevice();
   rmr.info("rec: using input stream: %"_fmt(input.name()));
 
-  int channels = std::min(2, input.maxInputChannels());
+  _channels = std::min(2, input.maxInputChannels());
 
   portaudio::DirectionSpecificStreamParameters inParamsRecord(
     input
-  , channels
+  , _channels
   , portaudio::FLOAT32
   , false
   , input.defaultLowInputLatency()
