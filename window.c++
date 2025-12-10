@@ -100,7 +100,8 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
 
   glfwSetWindowUserPointer(__.w, this);
 
-  dispatch(__.w, resize_e(width(), height()));
+  auto size = framebuffer_size();
+  dispatch(__.w, resize_e(size.x(), size.y()));
 
   name(hints.title);
   position(hints.left, hints.top);
@@ -167,23 +168,35 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
 
   glfwSetCursorPosCallback(__.w, [](GLFWwindow* w, double x, double y) {
     int width, height;
-    glfwGetWindowSize(w, &width, &height);
-    dispatch(w, mousemove_e{x, height - y});
+    int framebuffer_width, framebuffer_height;
+    glfwGetWindowSize     (w, &width,           &height);
+    glfwGetFramebufferSize(w, &framebuffer_width, &framebuffer_height);
+
+    double scale_x = width  ? (double)framebuffer_width  / (double)width  : 1.0;
+    double scale_y = height ? (double)framebuffer_height / (double)height : 1.0;
+
+    dispatch(w, mousemove_e{x * scale_x, (height - y) * scale_y});
   });
 
   glfwSetWindowSizeCallback(__.w, [](GLFWwindow* w, int width, int height) {
-    dispatch(w, resize_e(width, height));
-    rmr.info("window: resize: %x%"_fmt(width, height));
+    int framebuffer_width, framebuffer_height;
+    glfwGetFramebufferSize(w, &framebuffer_width, &framebuffer_height);
+    dispatch(w, resize_e(framebuffer_width, framebuffer_height));
+    rmr.info("window: resize: %x% fb %x%"_fmt(width, height, framebuffer_width, framebuffer_height));
   });
 
   glfwSetScrollCallback(__.w, [](GLFWwindow* w, double x, double y) {
     dispatch(w, scroll_e{x, y});
   });
 
-  glfwSetWindowRefreshCallback  (__.w, [](GLFWwindow* w                       ) { rmr.info("window refresh"); });
   glfwSetWindowIconifyCallback  (__.w, [](GLFWwindow* w, int iconified        ) { rmr.info("iconify");        });
-  glfwSetFramebufferSizeCallback(__.w, [](GLFWwindow* w, int width, int height) { rmr.info("buffer size");    });
   glfwSetWindowPosCallback      (__.w, [](GLFWwindow* w, int x, int y         ) { rmr.info("window pos");     });
+  glfwSetWindowRefreshCallback  (__.w, [](GLFWwindow* w                       ) { rmr.info("window refresh"); });
+
+  glfwSetFramebufferSizeCallback(__.w, [](GLFWwindow* w, int width, int height) {
+    rmr.info("buffer size: %x%"_fmt(width, height));
+    dispatch(w, resize_e(width, height));
+  });
 
   NSOpenGLContext* ns_ctx = glfwGetNSGLContext(__.w);
   CGLContextObj ctx_a = (CGLContextObj)[ns_ctx CGLContextObj];
@@ -309,7 +322,7 @@ img_t window_t::screenshot() {
   glReadBuffer(GL_FRONT);
 
   int w, h;
-  glfwGetWindowSize(__.w, &w, &h);
+  glfwGetFramebufferSize(__.w, &w, &h);
 
   img_t dest;
   dest.resize(w, h);
@@ -332,6 +345,12 @@ int window_t::height() const { int w, h; glfwGetWindowSize(__.w, &w, &h); return
 uvec2 window_t::size() const {
   int w, h;
   glfwGetWindowSize(__.w, &w, &h);
+  return uvec2(w, h);
+}
+
+uvec2 window_t::framebuffer_size() const {
+  int w, h;
+  glfwGetFramebufferSize(__.w, &w, &h);
   return uvec2(w, h);
 }
 
@@ -396,11 +415,12 @@ void window_t::operator()(const render_e& e) {
   uint fbo = gl().get_fbo("frame");
   uint rbo = gl().get_rbo("frame");
   uint tex = gl().get_tex("frame");
+  auto framebuffer = framebuffer_size();
 
   glBindFramebuffer(GL_FRAMEBUFFER, fbo);
   glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 
-  if (rmr.changed(__.allocated, size())) {
+  if (rmr.changed(__.allocated, framebuffer)) {
     gl().image("frame", __.allocated.x(), __.allocated.y());
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, __.allocated.x(), __.allocated.y());
   }
@@ -441,8 +461,8 @@ void window_t::operator()(const render_e& e) {
   }
 
   draw_e draw{e.tick};
-  draw.w = width();
-  draw.h = height();
+  draw.w = __.allocated.x();
+  draw.h = __.allocated.y();
   draw.x = 0;
   draw.y = 0;
 
@@ -451,6 +471,7 @@ void window_t::operator()(const render_e& e) {
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
   gl()
+  .aperture(0, 0, __.allocated.x(), __.allocated.y())
   .prepare("copy")
   .value("source", "frame")
   .pack({"position"}, "quad")
@@ -468,6 +489,7 @@ void window_t::operator()(const render_e& e) {
   if (__.has_clients) {
     syphon().bind();
     gl()
+    .aperture(0, 0, __.allocated.x(), __.allocated.y())
     .prepare("copy")
     .value("source", "frame")
     .pack({"position"}, "quad")

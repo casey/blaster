@@ -1,5 +1,5 @@
 run: build
-	./tmp/main --resolution=1800p --route=blaster --left=10
+	./tmp/main --resolution=720p --route=blaster --left=10
 
 build:
 	make tmp/main

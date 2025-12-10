@@ -1,5 +1,6 @@
 #import "top.h"
 #import "img.h"
+#import "vec.h"
 
 extern "C" {
   struct _CGLContextObject;
@@ -21,6 +22,7 @@ struct window_t : top_t {
   img_t screenshot();
   int  width()  const;
   int  height() const;
+  uvec2 framebuffer_size() const;
   uvec2 size() const;
   _ size(int width, int height);
   _ left(int);
