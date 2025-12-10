@@ -135,7 +135,7 @@ else:
 
 text = template.render(v)
 
-text = re.sub('^\s*$','', text, flags=re.M)
+text = re.sub(r'^\s*$','', text, flags=re.M)
 
 from subprocess import Popen, PIPE, STDOUT
 p = Popen('astyle -Y --indent=spaces=2'.split(), stdout=PIPE, stdin=PIPE, stderr=STDOUT)
