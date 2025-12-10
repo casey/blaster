@@ -22,8 +22,6 @@ struct window_t : top_t {
   img_t screenshot();
   int  width()  const;
   int  height() const;
-  int framebuffer_width()  const;
-  int framebuffer_height() const;
   uvec2 framebuffer_size() const;
   uvec2 size() const;
   _ size(int width, int height);

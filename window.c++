@@ -100,7 +100,8 @@ window_t::window_t(const hints_t& hints) : __(*new data_t) {
 
   glfwSetWindowUserPointer(__.w, this);
 
-  dispatch(__.w, resize_e(framebuffer_width(), framebuffer_height()));
+  auto size = framebuffer_size();
+  dispatch(__.w, resize_e(size.x(), size.y()));
 
   name(hints.title);
   position(hints.left, hints.top);
@@ -339,18 +340,6 @@ bool window_t::closing() {
 
 int window_t::width()  const { int w, h; glfwGetWindowSize(__.w, &w, &h); return w; }
 int window_t::height() const { int w, h; glfwGetWindowSize(__.w, &w, &h); return h; }
-
-int window_t::framebuffer_width() const {
-  int w, h;
-  glfwGetFramebufferSize(__.w, &w, &h);
-  return w;
-}
-
-int window_t::framebuffer_height() const {
-  int w, h;
-  glfwGetFramebufferSize(__.w, &w, &h);
-  return h;
-}
 
 uvec2 window_t::size() const {
   int w, h;
