@@ -40,6 +40,7 @@ CXXFLAGS += -stdlib=libc++
 
 LINKFLAGS += -F frameworks
 LINKFLAGS += -L /opt/homebrew/lib
+LINKFLAGS += -Wl,-rpath,@executable_path/../frameworks
 LINKFLAGS += -framework Foundation
 LINKFLAGS += -framework OpenGL
 LINKFLAGS += -framework Syphon
