@@ -356,6 +356,9 @@ struct blaster : view_t {
       command.erase(0, 1);
       execute(command);
       command = "";
+    } if (e.key == GLFW_KEY_BACKSPACE) {
+      checkpoint();
+      pop_top();
     } else {
       shortcut_t s{e};
       if (shortcuts.count(s) > 0) shortcuts[s]();
