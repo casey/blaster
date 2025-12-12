@@ -356,7 +356,7 @@ struct blaster : view_t {
       command.erase(0, 1);
       execute(command);
       command = "";
-    } if (e.key == GLFW_KEY_BACKSPACE) {
+    } if (!ex && e.key == GLFW_KEY_BACKSPACE) {
       checkpoint();
       pop_top();
     } else {
@@ -367,7 +367,7 @@ struct blaster : view_t {
 
   void operator()(const character_e& e) override {
     if (ex) {
-      command += e.str == " "s ? "_"s : e.str;
+      command += (e.str == " "s || e.str == "-"s) ? "_"s : e.str;
     } else {
       checkpoint();
       char c = e.str[0];
