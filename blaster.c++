@@ -375,6 +375,7 @@ struct blaster : view_t {
 #define _(CHAR, CMD) case CHAR: last_command = #CMD; rmr << last_command; CMD; break;
         _(' ', push_top()   );
         _('0', reset_beat() );
+        _('?', print()      );
         _('a', advance()    );
         _('c', cycle()      );
         _('d', roll_down()  );
@@ -389,7 +390,6 @@ struct blaster : view_t {
         _('w', waffle()     );
         _('x', randomize()  );
         _('z', unwind()     );
-        _('?', print()      );
 #undef _
         default: rewind();
       }
