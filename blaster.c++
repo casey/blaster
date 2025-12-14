@@ -389,7 +389,7 @@ struct blaster : view_t {
         _('w', waffle()     );
         _('x', randomize()  );
         _('z', unwind()     );
-        _('?', print() );
+        _('?', print()      );
 #undef _
         default: rewind();
       }
